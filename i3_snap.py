@@ -27,19 +27,12 @@ class I3Snapper:
             workspace.rect.height,
         )
 
-    def __calculate_new_position_and_size(
-        self, direction: str, window, workspace, margin: int
-    ):
+    def __calculate_new_position(self, direction: str, window, workspace, margin: int):
         workspace_x, workspace_y, workspace_width, workspace_height = (
             self.__get_workspace_dimensions(workspace)
         )
-        half_width = workspace_width // 2
-        half_height = workspace_height // 2
 
-        logging.info(
-            f"Current window position: x={window.rect.x}, y={window.rect.y}, "
-            f"width={window.rect.width}, height={window.rect.height}"
-        )
+        logging.info(f"Current window position: x={window.rect.x}, y={window.rect.y}")
         logging.info(
             f"Workspace dimensions: x={workspace_x}, y={workspace_y}, "
             f"width={workspace_width}, height={workspace_height}"
@@ -47,33 +40,17 @@ class I3Snapper:
 
         match direction:
             case "l":
-                return (
-                    workspace_x + margin,
-                    workspace_y + margin,
-                    half_width - 2 * margin,
-                    workspace_height - 2 * margin,
-                )
+                return workspace_x + margin, max(workspace_y + margin, window.rect.y)
             case "r":
-                return (
-                    workspace_x + half_width + margin,
-                    workspace_y + margin,
-                    half_width - 2 * margin,
-                    workspace_height - 2 * margin,
+                return workspace_x + workspace_width - window.rect.width - margin, max(
+                    workspace_y + margin, window.rect.y
                 )
             case "t":
-                return (
-                    workspace_x + margin,
-                    workspace_y + margin,
-                    workspace_width - 2 * margin,
-                    half_height - 2 * margin,
-                )
+                return max(workspace_x + margin, window.rect.x), workspace_y + margin
             case "b":
-                return (
-                    workspace_x + margin,
-                    workspace_y + half_height + margin,
-                    workspace_width - 2 * margin,
-                    half_height - 2 * margin,
-                )
+                return max(
+                    workspace_x + margin, window.rect.x
+                ), workspace_y + workspace_height - window.rect.height - margin
             case _:
                 return None
 
@@ -88,14 +65,13 @@ class I3Snapper:
             logging.warning("Window is not floating. Snapping not performed.")
             sys.exit(1)
 
-        new_position_and_size = self.__calculate_new_position_and_size(
+        new_position = self.__calculate_new_position(
             direction, window, workspace, margin
         )
 
-        if new_position_and_size:
-            new_x, new_y, new_width, new_height = new_position_and_size
+        if new_position:
+            new_x, new_y = new_position
             window.command(f"move position {new_x} {new_y}")
-            window.command(f"resize set {new_width} {new_height}")
             logging.info(f"Window snapped to {direction} with a margin of {margin}px.")
         else:
             logging.error(f"Unknown direction: {direction}")
