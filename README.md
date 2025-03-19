@@ -1,50 +1,66 @@
+
 # i3-snap
 
-A Python script for snapping floating windows in i3 window manager. It allows quick placement of floating windows into predefined positions (left, right, top, bottom) while maintaining customizable margins.
+`i3-snap` is a script for managing window positions in i3wm. It allows snapping floating windows to screen edges, centering them, or moving them between workspaces.
+
+## Features
+
+- Move floating windows left, right, up, down, or center them.
+- Automatically move a window to the next workspace when reaching the edge.
+- Supports setting a margin from the screen edges.
+- Works with non-floating windows using standard i3 commands.
 
 ## Installation
 
-Ensure you have `i3ipc` installed:
+### Requirements
+
+- `python` (>=3.6)
+- `i3ipc`
+
+Install dependencies:
 
 ```sh
 pip install i3ipc
 ```
 
-Clone the repository:
+Save `i3-snap` to a convenient location and make it executable:
 
 ```sh
-git clone https://github.com/Bogdan-Malina/i3-snap.git
-cd i3-snap
+chmod +x i3-snap.py
 ```
 
 ## Usage
 
-Run the script with the desired snapping direction:
-
 ```sh
-./i3_snap.py <direction> [-m MARGIN]
+./i3-snap.py <direction> [-m MARGIN]
 ```
 
 ### Arguments
 
-- `<direction>`: `t` (top), `b` (bottom), `l` (left), `r` (right).
-- `-m, --margin` (optional): Margin in pixels (default: 15).
+- `<direction>` – snapping direction (`left`, `right`, `up`, `down`, `center`).
+- `-m`, `--margin` – margin from the edge (default: 15px).
 
 ### Examples
 
-Snap the active floating window to the left:
+Snap a window to the left edge:
 
 ```sh
-./i3_snap.py l
+./i3-snap.py left
 ```
 
-Snap to the right with a custom margin:
+Snap to the right edge with a 30px margin:
 
 ```sh
-./i3_snap.py r -m 20
+./i3-snap.py right -m 30
 ```
 
-## Notes
+## Automation
 
-- The script works only with floating windows.
-- Ensure you have `i3` and `i3ipc` installed before running.
+Add key bindings to `~/.config/i3/config`:
+
+```
+bindsym $mod+Left exec ~/scripts/i3-snap.py left
+bindsym $mod+Right exec ~/scripts/i3-snap.py right
+bindsym $mod+Up exec ~/scripts/i3-snap.py up
+bindsym $mod+Down exec ~/scripts/i3-snap.py down
+```
