@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from i3ipc import Connection
+from enum import Enum
+
 import argparse
 import logging
 import sys
-from i3ipc import Connection
-from enum import Enum
 
 
 class Direction(Enum):
